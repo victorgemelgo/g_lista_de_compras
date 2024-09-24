@@ -131,12 +131,13 @@
               icon="save"
               label="Salvar"
               size="lg"
-              @click="calcTotalValor"
+              @click="salvarLista('listaCompras')"
             />
           </div>
         </div>
       </div>
     </div>
+
     <!-- /RODAPE -->
   </div>
 </template>
@@ -149,6 +150,7 @@
     data() {
       return {
         nomeLista: '',
+        nomeEmUso: false,
         listaProdutos: [],
         nomeNovo: '',
         quantNovo: 1,
@@ -167,6 +169,13 @@
           this.calcTotalValor();
         },
         deep: true, // Monitora mudanças profundas nos objetos do array
+      },
+      alerta: {
+        handler(newVal, oldVal) {
+          setTimeout(() => {
+            this.alerta = false;
+          }, 5000);
+        },
       },
     },
     methods: {
@@ -214,6 +223,31 @@
           return total + parseFloat(produto.valor);
         }, 0);
         this.totalValor = Number(valorTotal.toFixed(2));
+      },
+      salvarLista(keyToCheck) {
+        const keys = Object.keys(localStorage);
+        this.nomeEmUso = keys.includes(this.nomeLista);
+        if (this.nomeEmUso) {
+          this.alerta = true;
+          this.msgAlerta = 'Ja existe uma lista salva com este nome!';
+          this.statusAlerta = 'erro';
+        } else if (this.nomeLista != '') {
+          localStorage.setItem(
+            this.nomeLista,
+            JSON.stringify(this.listaProdutos)
+          );
+          this.alerta = true;
+          this.msgAlerta = 'Lista salva com sucesso';
+          this.statusAlerta = 'sucesso';
+        } else if (this.listaProdutos == '') {
+          this.alerta = true;
+          this.msgAlerta = 'Adicione ao menos um produto';
+          this.statusAlerta = 'alerta';
+        } else {
+          this.alerta = true;
+          this.msgAlerta = 'Preencha o nome da lista';
+          this.statusAlerta = 'erro';
+        }
       },
     },
   });
