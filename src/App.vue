@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-defineOptions({
-  name: 'App'
-});
+  defineOptions({
+    name: 'App',
+  });
 </script>
